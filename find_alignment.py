@@ -77,17 +77,18 @@ if __name__ == "__main__" :
 
     """
     Example Usage : 
-    python find_alignment.py <list of top words> <source model> <dest model> <save filepath> <number of words to check the alignment on (sorted by decreasing frequency)> 
+    python find_alignment.py <list of top source words> <list of top target words> <source model> <dest model> <save filepath> <number of words to check the alignment on (sorted by decreasing frequency)> 
 
     python find_alignment.py 2020_top_10k_words.txt models/cnn_2020_97M.bin models/fox_2020_97M.bin 2020_fox_cnn_97.txt 5000
 
     """
 
-    intersection = get_words(sys.argv[1])
-    source_model_filepath = sys.argv[2]
-    target_model_filepath = sys.argv[3]
-    result_save_path = sys.argv[4]
-    num_translate = int(sys.argv[5])
+    source_intersection = get_words(sys.argv[1])
+    target_intersection = get_words(sys.argv[2])
+    source_model_filepath = sys.argv[3]
+    target_model_filepath = sys.argv[4]
+    result_save_path = sys.argv[5]
+    num_translate = int(sys.argv[6])
 
     bilingual_dict = [(w,w) for w in stops]
     source_model = ft.load_model(source_model_filepath)
@@ -108,7 +109,7 @@ if __name__ == "__main__" :
 
     with open(result_save_path, "w") as fp: 
         print(f"index\tcount\talign%\tsource\ttarget\trest")   
-        for word in intersection: 
+        for word in source_intersection: 
             index += 1
             if index <= num_translate : 
                 
@@ -117,8 +118,8 @@ if __name__ == "__main__" :
                 #fox = fox_model[word]
                 
                 
-                n = get_nearest_words(np.dot(source_word, transform), target_model, intersection)
-                n1 = get_nearest_words(source_word, source_model, intersection)
+                n = get_nearest_words(np.dot(source_word, transform), target_model, target_intersection)
+                n1 = get_nearest_words(source_word, source_model, source_intersection)
 
                 if n[0][0] != word : 
                     count += 1
